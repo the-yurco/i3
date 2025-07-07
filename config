@@ -1,0 +1,147 @@
+
+# i3 config file (v4)
+# See https://i3wm.org/docs/userguide.html for documentation
+
+exec_always --no-startup-id ~/.config/polybar/launch.sh
+
+# Set modifier key (Super key)
+set $mod Mod4
+
+# Font for window titles
+font pango:JetBrainsMono Nerd Font 10
+
+# Autostart applications
+exec dex --autostart --environment i3
+exec xss-lock -- i3lock -i /home/$USER/.config/i3/lock.png --color=1d2021
+exec nm-applet
+exec blueman-applet
+exec dunst
+exec feh --bg-fill /home/$USER/.config/i3/wallpaper.jpg
+exec picom --config /home/$USER/.config/picom/picom.conf
+
+# Volume and brightness control
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+bindsym XF86MonBrightnessUp exec brightnessctl set +10%
+bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
+
+# Start terminal
+bindsym $mod+Return exec kitty || xterm
+
+# Launch rofi
+bindsym $mod+d exec rofi -show drun -theme ~/.config/rofi/theme.rasi
+
+# Application shortcuts
+bindsym $mod+Shift+p exec codium
+bindsym $mod+Shift+f exec nautilus
+bindsym $mod+Shift+v exec clipman
+bindsym $mod+Shift+t exec kitty -e htop
+bindsym $mod+Shift+w exec firefox
+bindsym $mod+Shift+b exec --no-startup-id kitty -e bat
+
+# Screenshot
+bindsym $mod+Print exec maim --format=png "/home/$USER/Pictures/screenshot-$(date -u +'%Y%m%d-%H%M%SZ').png"
+bindsym $mod+Shift+Print exec maim -s | xclip -selection clipboard -t image/png
+
+# Kill focused window
+bindsym $mod+Shift+q kill
+
+# Change focus
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# Split and layout
+bindsym $mod+v split h
+bindsym $mod+b split v
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# Toggle tiling/floating
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+
+# Focus parent
+bindsym $mod+a focus parent
+
+# Scratchpad
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+# Workspace definitions
+set $ws1 "1: Code"
+set $ws2 "2: Web"
+set $ws3 "3: Term"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# Workspace switching
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+# Move to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# Assign applications
+assign [class="firefox"] $ws2
+assign [class="Gimp"] $ws7
+assign [class="Discord"] $ws9
+
+# Reload, restart, exit
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -B 'Yes' 'i3-msg exit'"
+
+# Resize mode
+mode "resize" {
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# Launch Firefox and ensure it moves to workspace 2
+exec --no-startup-id firefox && i3-msg '[class="firefox"] move to workspace $ws2'
+
+# Disable window title bars and decorations
+for_window [class="^.*"] border pixel 2
+# for_window [class="^.*"] titlebar pixel 0
+
+#gaps inner 10 px
+#gaps outer 10 px
